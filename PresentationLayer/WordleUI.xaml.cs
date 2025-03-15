@@ -47,6 +47,22 @@ public partial class WordleUI : Window
             return;
         }
 
+        if (userWord.Equals(selectedWord.ToUpper()))
+        {
+            foreach (var button in buttons)
+            {
+                button.IsEnabled = false;
+                EnterButton.IsEnabled = false;
+                BackSpace.IsEnabled = false;
+            }
+
+            foreach (var textBox in textBoxesObj)
+            {
+                textBox.Background = Brushes.Green;
+            }
+            return;
+        }
+
         GuessingLogic guessingLogic = new GuessingLogic();
 
         try

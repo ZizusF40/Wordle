@@ -5,6 +5,8 @@ public class ButtonsHighlighterService
 {
     private List<Button> buttons = new List<Button>();
 
+    private Color greenColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
+
     public ButtonsHighlighterService(List<Button> buttons)
     {
         this.buttons = buttons;
@@ -14,7 +16,9 @@ public class ButtonsHighlighterService
     {
         foreach (var button in buttons)
         {
-            if (Convert.ToString(button.Content).Contains(buttonChar))
+            if (Convert.ToString(button.Content).Contains(buttonChar) && 
+                button.Background is SolidColorBrush brush && 
+                brush.Color != greenColor)
             {
                 button.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
             }
