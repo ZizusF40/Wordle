@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 namespace PresentationLayer;
 
 /// <summary>
@@ -342,30 +343,55 @@ public partial class MainWindow : Window
 
         GuessingLogic guessingLogic = new GuessingLogic();
 
-        guessingLogic.CheckCharacters(userWord, selectedWord);
+        try
+        {
+            guessingLogic.CheckCharacters(userWord, selectedWord);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            NotEnoughLettersPopup.IsOpen = true;
+
+            // Create a timer to close the popup after 5 seconds
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += (s, args) =>
+            {
+                // Close the popup
+                NotEnoughLettersPopup.IsOpen = false;
+                timer.Stop(); // Stop the timer
+            };
+            timer.Start(); // Start the timer
+        }
 
         List<(char, int)> samePositions = guessingLogic.SamePosition;
 
         List<(char, int)> presentButNotSamePositions = guessingLogic.PresentButNotSamePosition;
 
-        bool isCorrect = false;
+        List<(char, int)> notPresent = guessingLogic.NotPresent;
 
-        IButtonsService buttonsService = new ButtonsService(buttons);
+        bool isNotCorrect = true;
+
+        ButtonsService buttonsService = new ButtonsService(buttons);
 
         for (int i = 0; i < samePositions.Count; i++)
         {
             textBoxesObj[samePositions[i].Item2].Background = Brushes.Green;
-            buttonsService.HighlightButtonsGreen(samePositions[i].Item1);
-            isCorrect = true;
+            buttonsService.HighlightButtons(samePositions[i].Item1, "#FF00FF00");
+            isNotCorrect = false;
         }
 
-        if (!isCorrect)
+        if (isNotCorrect)
         {
             for (int i = 0; i < presentButNotSamePositions.Count; i++)
             {
                 textBoxesObj[presentButNotSamePositions[i].Item2].Background = Brushes.Yellow;
-                buttonsService.HighlightButtonsYellow(presentButNotSamePositions[i].Item1);
+                buttonsService.HighlightButtons(presentButNotSamePositions[i].Item1, "#FFFFFF00");
             }
+        }
+
+        for (int i = 0; i < notPresent.Count; i++)
+        {
+            buttonsService.HighlightButtons(notPresent[i].Item1, "#f1ecec");
         }
     }
 

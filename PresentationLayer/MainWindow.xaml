@@ -42,6 +42,12 @@
         <TextBox x:Name="_3letter" HorizontalAlignment="Left" Margin="566,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" Height="58" FontWeight="Bold" TextAlignment="Center" Foreground="White" FontFamily="Arial Black" FontSize="24" Background="Black" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox x:Name="_4letter" HorizontalAlignment="Left" Margin="644,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" Height="58" FontWeight="Bold" TextAlignment="Center" Foreground="White" FontFamily="Arial Black" FontSize="24" Background="Black" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox x:Name="_5letter" HorizontalAlignment="Left" Margin="722,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58" Height="58" FontWeight="Bold" TextAlignment="Center" Foreground="White" FontFamily="Arial Black" FontSize="24" Background="Black" IsReadOnly="True" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+		
+		<Popup x:Name="NotEnoughLettersPopup" Placement="Center" AllowsTransparency="True" PopupAnimation="Slide" StaysOpen="False">
+            <Border Background="LightYellow" Padding="20" CornerRadius="10" BorderBrush="Black" BorderThickness="1">
+                <TextBlock x:Name="NotEnoughLettersPopupTextBlock" Text="Not Enough Letters!" FontSize="16" />
+            </Border>
+        </Popup>
 
     </Grid>
 </Window>
