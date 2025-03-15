@@ -1,11 +1,11 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-public class ButtonsService
+public class ButtonsHighlighterService
 {
     private List<Button> buttons = new List<Button>();
 
-    public ButtonsService(List<Button> buttons)
+    public ButtonsHighlighterService(List<Button> buttons)
     {
         this.buttons = buttons;
     }
