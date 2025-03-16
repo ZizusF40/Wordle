@@ -80,6 +80,7 @@
             </Border>
         </Popup>
         <Label x:Name="showTheWordLabel" Content="dummy" HorizontalAlignment="Left" Margin="559,57,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Arial Black" FontSize="24"/>
+        <Label Content="Press the Pause/Break key to reset the game." HorizontalAlignment="Left" Margin="22,319,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Arial Black" FontSize="16"/>
 
     </Grid>
 </Window>

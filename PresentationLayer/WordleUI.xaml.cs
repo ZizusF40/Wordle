@@ -33,6 +33,11 @@ public partial class WordleUI : Window
 
     private void EnterButton_Click(object sender, RoutedEventArgs e)
     {
+        if (attempts.Lives >= 6)
+        {
+            return;
+        }
+
         List<Button> buttons = new List<Button> { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M };
 
         string userWord = GetTextBoxesAndUserWord().Item2;
@@ -126,6 +131,11 @@ public partial class WordleUI : Window
 
     private void BackSpace_Click(object sender, RoutedEventArgs e)
     {
+        if (attempts.Lives >= 6)
+        {
+            return;
+        }
+
         IndexLogic indexLogic = new IndexLogic();
 
         int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attempts.Lives);
@@ -164,6 +174,17 @@ public partial class WordleUI : Window
 
             e.Handled = true;
         }
+
+        if (e.Key == Key.Pause)
+        {
+            List<Button> buttons = new List<Button> 
+            { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
+
+            Reseter reseter = new Reseter(buttons, showTheWordLabel, GetTextBoxesAndUserWord().Item1, ref attempts, ref selectedWordLogic);
+            reseter.ResetApp();
+
+            e.Handled = true;
+        }
     }
 
     private (TextBox[,], string, string[,]) GetTextBoxesAndUserWord()
@@ -182,14 +203,20 @@ public partial class WordleUI : Window
 
         for (int i = 0; i < 5; i++)
         {
-            result.Append(textBoxesObj[attempts.Lives, i].Text);
+            if (attempts.Lives < 6)
+            {
+                result.Append(textBoxesObj[attempts.Lives, i].Text);
+            }
         }
 
         string[,] texts = new string[6, 5];
 
         for (int i = 0; i < 5; i++)
         {
-            texts[attempts.Lives, i] = textBoxesObj[attempts.Lives, i].Text;
+            if (attempts.Lives < 6)
+            {
+                texts[attempts.Lives, i] = textBoxesObj[attempts.Lives, i].Text;
+            }
         }
 
         return
