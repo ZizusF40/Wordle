@@ -16,4 +16,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="json\words.bak">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

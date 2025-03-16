@@ -6,22 +6,15 @@
 
     public SelectedWordLogic()
     {
-		try
-		{
-            Words words = new Words();
+        Words words = new Words();
 
-            List<string> wordsList = words.GetAllWords();
+        List<string> bufferList = words.GetAllWords();
 
-            Random random = new Random();
+        Random random = new Random();
 
-            int randomIndex = random.Next(wordsList.Count);
+        int index = random.Next(bufferList.Count);
 
-            selectedWord = wordsList[randomIndex];
-        }
-		catch (InvalidOperationException ex)
-		{
-            Console.WriteLine(ex.Message);
-        }
+        selectedWord = bufferList[index];
     }
 }
 

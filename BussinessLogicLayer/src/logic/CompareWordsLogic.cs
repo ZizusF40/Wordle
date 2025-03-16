@@ -1,11 +1,9 @@
-﻿using Microsoft.VisualBasic;
-
-public class CompareWordsLogic
+﻿public class CompareWordsLogic
 {
-    Words words = new Words();
-
     public bool CompareWords(string userWord)
     {
+        Words words = new Words();
+
         if (words.GetAllWords().ConvertAll(s => s.ToUpper()).Contains(userWord))
         {
             return true; // The word is valid
@@ -14,4 +12,3 @@ public class CompareWordsLogic
         return false; // The word is invalid
     }
 }
-
