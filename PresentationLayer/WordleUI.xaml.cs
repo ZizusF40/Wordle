@@ -116,25 +116,22 @@ public partial class WordleUI : Window
 
         List<(char, int)> notPresent = guessingLogic.NotPresent;
 
-        bool isNotCorrect = true;
-
         ButtonsHighlighterService buttonsHighlighterService = new ButtonsHighlighterService(buttons);
 
         for (int i = 0; i < samePositions.Count; i++)
         {
             textBoxesObj[attempts.Lives, samePositions[i].Item2].Background = Brushes.Green;
-            buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF00FF00");
-            isNotCorrect = false;
+            buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
+        }
+        for (int i = 0; i < presentButNotSamePositions.Count; i++)
+        {
+            Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
+            SolidColorBrush customBrush = new SolidColorBrush(customColor);
+
+            textBoxesObj[attempts.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
+            buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
         }
 
-        if (isNotCorrect)
-        {
-            for (int i = 0; i < presentButNotSamePositions.Count; i++)
-            {
-                textBoxesObj[attempts.Lives, presentButNotSamePositions[i].Item2].Background = Brushes.Yellow;
-                buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#FFFFFF00");
-            }
-        }
 
         for (int i = 0; i < notPresent.Count; i++)
         {

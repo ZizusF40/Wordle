@@ -5,7 +5,7 @@ public class ButtonsHighlighterService
 {
     private List<Button> buttons = new List<Button>();
 
-    private Color greenColor = (Color)ColorConverter.ConvertFromString("#FF00FF00");
+    private Color greenColor = (Color)ColorConverter.ConvertFromString("#FF008000");
 
     public ButtonsHighlighterService(List<Button> buttons)
     {
