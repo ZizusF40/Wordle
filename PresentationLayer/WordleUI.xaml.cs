@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Input;
 namespace PresentationLayer;
 
 /// <summary>
@@ -24,15 +25,7 @@ public partial class WordleUI : Window
         Button button = (Button)sender;
         ButtonsAlphabetTextService buttonsAlphabetTextService = new ButtonsAlphabetTextService();
 
-        buttonsAlphabetTextService.TextBoxes = new[,]
-        {
-            { _1letter, _2letter, _3letter, _4letter, _5letter },
-            { _1letter2Try, _2letter2Try, _3letter2Try, _4letter2Try, _5letter2Try },
-            { _1letter3Try, _2letter3Try, _3letter3Try, _4letter3Try, _5letter3Try },
-            { _1letter4Try, _2letter4Try, _3letter4Try, _4letter4Try, _5letter4Try },
-            { _1letter5Try, _2letter5Try, _3letter5Try, _4letter5Try, _5letter5Try },
-            { _1letter6Try, _2letter6Try, _3letter6Try, _4letter6Try, _5letter6Try }
-        };
+        buttonsAlphabetTextService.TextBoxes = GetTextBoxesAndUserWord().Item1;
         buttonsAlphabetTextService.Letter = button.Content?.ToString() ?? string.Empty;
         buttonsAlphabetTextService.Lives = attempts.Lives;
         buttonsAlphabetTextService.WriteLetterToTextBox();
@@ -40,31 +33,9 @@ public partial class WordleUI : Window
 
     private void EnterButton_Click(object sender, RoutedEventArgs e)
     {
-        TextBox[,] textBoxesObj =
-        {
-            { _1letter, _2letter, _3letter, _4letter, _5letter },
-            { _1letter2Try, _2letter2Try, _3letter2Try, _4letter2Try, _5letter2Try },
-            { _1letter3Try, _2letter3Try, _3letter3Try, _4letter3Try, _5letter3Try },
-            { _1letter4Try, _2letter4Try, _3letter4Try, _4letter4Try, _5letter4Try },
-            { _1letter5Try, _2letter5Try, _3letter5Try, _4letter5Try, _5letter5Try },
-            { _1letter6Try, _2letter6Try, _3letter6Try, _4letter6Try, _5letter6Try }
-        };
-
-        string GetTextBoxTexts(TextBox[,] textBoxesObj)
-        {
-            StringBuilder result = new StringBuilder();
-
-            for (int i = 0; i < 5; i++)
-            {
-                result.Append(textBoxesObj[attempts.Lives, i].Text);
-            }
-
-            return result.ToString().Trim(); // Remove the trailing space
-        }
-
         List<Button> buttons = new List<Button> { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M };
 
-        string userWord = GetTextBoxTexts(textBoxesObj);
+        string userWord = GetTextBoxesAndUserWord().Item2;
 
         string selectedWord = selectedWordLogic.SelectedWord.ToUpper();
 
@@ -105,7 +76,7 @@ public partial class WordleUI : Window
 
             for (int i = 0; i < 5; i++)
             {
-                textBoxesObj[attempts.Lives, i].Background = Brushes.Green;
+                GetTextBoxesAndUserWord().Item1[attempts.Lives, i].Background = Brushes.Green;
             }
             return;
         }
@@ -120,7 +91,7 @@ public partial class WordleUI : Window
 
         for (int i = 0; i < samePositions.Count; i++)
         {
-            textBoxesObj[attempts.Lives, samePositions[i].Item2].Background = Brushes.Green;
+            GetTextBoxesAndUserWord().Item1[attempts.Lives, samePositions[i].Item2].Background = Brushes.Green;
             buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
         }
         for (int i = 0; i < presentButNotSamePositions.Count; i++)
@@ -128,7 +99,7 @@ public partial class WordleUI : Window
             Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
             SolidColorBrush customBrush = new SolidColorBrush(customColor);
 
-            textBoxesObj[attempts.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
+            GetTextBoxesAndUserWord().Item1[attempts.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
             buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
         }
 
@@ -137,9 +108,10 @@ public partial class WordleUI : Window
         {
             buttonsHighlighterService.HighlightButtons(notPresent[i].Item1, "#f1ecec");
         }
+
         attempts.Lives++;
 
-        if (attempts.Lives >= 6)
+        if (attempts.Lives > 5)
         {
             foreach (var button in buttons)
             {
@@ -154,6 +126,48 @@ public partial class WordleUI : Window
 
     private void BackSpace_Click(object sender, RoutedEventArgs e)
     {
+        IndexLogic indexLogic = new IndexLogic();
+
+        int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attempts.Lives);
+
+        if (index == -1 && GetTextBoxesAndUserWord().Item1[attempts.Lives, 4].Text != "") GetTextBoxesAndUserWord().Item1[attempts.Lives, 4].Text = "";
+        else if (!string.IsNullOrEmpty(GetTextBoxesAndUserWord().Item1[attempts.Lives, 0].Text)) GetTextBoxesAndUserWord().Item1[attempts.Lives, index - 1].Text = "";
+
+    }
+    
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        IndexLogic indexLogic = new IndexLogic();
+
+        // Handle key presses
+        if (e.Key >= Key.A && e.Key <= Key.Z) // Only allow letters A-Z
+        {
+            int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attempts.Lives);
+
+            // Append the pressed key to the TextBox
+            if (index != -1)
+            {
+                GetTextBoxesAndUserWord().Item1[attempts.Lives, index].Text += e.Key.ToString();
+            }
+        }
+
+        if (e.Key == Key.Enter)
+        {
+            EnterButton_Click(sender, e);
+
+            e.Handled = true;
+        }
+
+        if (e.Key == Key.Back)
+        {
+            BackSpace_Click(sender, e);
+
+            e.Handled = true;
+        }
+    }
+
+    private (TextBox[,], string, string[,]) GetTextBoxesAndUserWord()
+    {
         TextBox[,] textBoxesObj =
         {
             { _1letter, _2letter, _3letter, _4letter, _5letter },
@@ -164,23 +178,25 @@ public partial class WordleUI : Window
             { _1letter6Try, _2letter6Try, _3letter6Try, _4letter6Try, _5letter6Try }
         };
 
-        IndexLogic indexLogic = new IndexLogic();
+        StringBuilder result = new StringBuilder();
 
-        int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxTexts(textBoxesObj), attempts.Lives);
-
-        if (index == -1 && textBoxesObj[attempts.Lives, 4].Text != "") textBoxesObj[attempts.Lives, 4].Text = "";
-        else if (!string.IsNullOrEmpty(textBoxesObj[attempts.Lives, 0].Text)) textBoxesObj[attempts.Lives, index - 1].Text = "";
-
-        string[,] GetTextBoxTexts(TextBox[,] textBoxesObj)
+        for (int i = 0; i < 5; i++)
         {
-            string[,] texts = new string[6, 5];
-
-            for (int i = 0; i < 5; i++)
-            {
-                texts[attempts.Lives, i] = textBoxesObj[attempts.Lives, i].Text;
-            }
-
-            return texts;
+            result.Append(textBoxesObj[attempts.Lives, i].Text);
         }
+
+        string[,] texts = new string[6, 5];
+
+        for (int i = 0; i < 5; i++)
+        {
+            texts[attempts.Lives, i] = textBoxesObj[attempts.Lives, i].Text;
+        }
+
+        return
+        (
+            textBoxesObj, // return array of textbox objects
+            result.ToString().Trim(), // return the text from textbox in a entire string
+            texts // return characters from textbox in a array of string
+        ); 
     }
 }

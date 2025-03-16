@@ -18,9 +18,9 @@ public class PopupService
     {
         popup.IsOpen = true;
         popupTextBlock.Text = message;
-        // Create a timer to close the popup after 5 seconds
+        // Create a timer to close the popup after 3 seconds
         DispatcherTimer timer = new DispatcherTimer();
-        timer.Interval = TimeSpan.FromSeconds(5);
+        timer.Interval = TimeSpan.FromSeconds(3);
         timer.Tick += (sender, e) =>
         {
             popup.IsOpen = false;
