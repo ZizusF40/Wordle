@@ -28,12 +28,3 @@
         WordsList = combination.ToList();
     }
 }
-
-
-
-//// Combine the lists using HashSet to remove duplicates
-//HashSet<string> combinedSet = new HashSet<string>(list1);
-//combinedSet.UnionWith(list2); // Add elements from list2, ignoring duplicates
-
-//// Convert the HashSet back to a list
-//List<string> finalList = combinedSet.ToList();

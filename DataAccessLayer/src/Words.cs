@@ -4,18 +4,10 @@ public class Words
 {
     public List<string> GetAllWords()
     {
-        // Path to the JSON file
-        //string baseDir = Directory.GetCurrentDirectory();
-
-        //string filePath = Path.Combine(baseDir, @"json\words.json");
-
-        string filePath = @"D:\Solutions\Wordle\DataAccessLayer\json\words.json";
-
-        // Read the JSON file// Read the JSON file
-        string jsonString = File.ReadAllText(filePath);
+        JsonResourceLoader jsonResourceLoader = new JsonResourceLoader();
 
         // Deserialize the JSON into a list of strings
-        List<string> words = JsonSerializer.Deserialize<List<string>>(jsonString);
+        List<string> words = JsonSerializer.Deserialize<List<string>>(jsonResourceLoader.LoadJSON());
 
         if (words == null || words.Count == 0)
         {
