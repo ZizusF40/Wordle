@@ -16,6 +16,7 @@ public partial class WordleUI : Window
     public WordleUI()
     {
         InitializeComponent();
+        showTheWordLabel.Visibility = Visibility.Hidden;
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -143,13 +144,13 @@ public partial class WordleUI : Window
 
         if (attempts.Lives >= 6)
         {
-            //Lose();
-
             foreach (var button in buttons)
             {
                 button.IsEnabled = false;
                 EnterButton.IsEnabled = false;
                 BackSpace.IsEnabled = false;
+                showTheWordLabel.Visibility = Visibility.Visible;
+                showTheWordLabel.Content = selectedWord;
             }
         }
     }

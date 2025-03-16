@@ -79,6 +79,7 @@
                 <TextBlock x:Name="PopupTextBlock" Text="dummy" FontSize="16" />
             </Border>
         </Popup>
+        <Label x:Name="showTheWordLabel" Content="dummy" HorizontalAlignment="Left" Margin="559,57,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Arial Black" FontSize="24"/>
 
     </Grid>
 </Window>
