@@ -4,12 +4,8 @@
 
     public string SelectedWord { get => selectedWord; }
 
-    public SelectedWordLogic()
+    public SelectedWordLogic(List<string> bufferList)
     {
-        Words words = new Words();
-
-        List<string> bufferList = words.GetAllWords();
-
         Random random = new Random();
 
         int index = random.Next(bufferList.Count);

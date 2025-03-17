@@ -13,13 +13,14 @@ public class Reseter
     private TextBox[,] _textBoxes;
 
     public Reseter
-        (List<Button> buttons, Label showTheWordLabel , TextBox[,] textBoxes, ref AttemptsLogic attempts, ref SelectedWordLogic selectedWordLogic)
+        (List<Button> buttons, Label showTheWordLabel , TextBox[,] textBoxes, List<string> wordsList,
+        ref AttemptsLogic attempts, ref SelectedWordLogic selectedWordLogic)
     {
         _buttons = buttons;
         showTheWordLabel.Visibility = Visibility.Hidden;
         _textBoxes = textBoxes;
         attempts = new AttemptsLogic();
-        selectedWordLogic = new SelectedWordLogic();
+        selectedWordLogic = new SelectedWordLogic(wordsList);
     }
 
     public void ResetApp()

@@ -10,14 +10,27 @@ namespace PresentationLayer;
 /// </summary>
 public partial class WordleUI : Window
 {
+    WordsFetcherLogic wordsFetcherLogic = new WordsFetcherLogic();
+
     AttemptsLogic attempts = new AttemptsLogic();
 
-    SelectedWordLogic selectedWordLogic = new SelectedWordLogic();
+    SelectedWordLogic selectedWordLogic = new SelectedWordLogic(new List<string>() { string.Empty });
 
     public WordleUI()
     {
         InitializeComponent();
+    }
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        await wordsFetcherLogic.GetWordsAsync();
+        Intialization();
+    }
+
+    private void Intialization()
+    {
         showTheWordLabel.Visibility = Visibility.Hidden;
+        attempts = new AttemptsLogic();
+        selectedWordLogic = new SelectedWordLogic(wordsFetcherLogic.WordsList);
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -59,7 +72,7 @@ public partial class WordleUI : Window
             return;
         }
 
-        CompareWordsLogic compareWordsLogic = new CompareWordsLogic();
+        CompareWordsLogic compareWordsLogic = new CompareWordsLogic(wordsFetcherLogic.WordsList);
 
         if (!compareWordsLogic.CompareWords(userWord))
         {
@@ -175,12 +188,14 @@ public partial class WordleUI : Window
             e.Handled = true;
         }
 
-        if (e.Key == Key.Pause)
+        if (e.Key == Key.Escape)
         {
             List<Button> buttons = new List<Button> 
             { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
 
-            Reseter reseter = new Reseter(buttons, showTheWordLabel, GetTextBoxesAndUserWord().Item1, ref attempts, ref selectedWordLogic);
+            Reseter reseter = new Reseter
+                (buttons, showTheWordLabel, GetTextBoxesAndUserWord().Item1, wordsFetcherLogic.WordsList,
+                ref attempts, ref selectedWordLogic);
             reseter.ResetApp();
 
             e.Handled = true;
