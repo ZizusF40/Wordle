@@ -10,27 +10,49 @@ namespace PresentationLayer;
 /// </summary>
 public partial class WordleUI : Window
 {
-    WordsFetcherLogic wordsFetcherLogic = new WordsFetcherLogic();
 
-    AttemptsLogic attempts = new AttemptsLogic();
+    private readonly WordsFetcherLogic wordsFetcherLogic;
+    WordSelectorLogic wordSelectorLogic;
+    AttemptsLogic attemptsLogic;
 
-    SelectedWordLogic selectedWordLogic = new SelectedWordLogic(new List<string>() { string.Empty });
+    private readonly Reseter _reseter;
 
-    public WordleUI()
+    public WordleUI(WordsFetcherLogic wordsFetcher)
     {
         InitializeComponent();
+
+        this.wordsFetcherLogic = wordsFetcher;
+        wordSelectorLogic = new WordSelectorLogic(wordsFetcherLogic.WordsList);
+        attemptsLogic = new AttemptsLogic();
+
+        TextBox[,] textBoxes =
+        {
+            { _1letter, _2letter, _3letter, _4letter, _5letter },
+            { _1letter2Try, _2letter2Try, _3letter2Try, _4letter2Try, _5letter2Try },
+            { _1letter3Try, _2letter3Try, _3letter3Try, _4letter3Try, _5letter3Try },
+            { _1letter4Try, _2letter4Try, _3letter4Try, _4letter4Try, _5letter4Try },
+            { _1letter5Try, _2letter5Try, _3letter5Try, _4letter5Try, _5letter5Try },
+            { _1letter6Try, _2letter6Try, _3letter6Try, _4letter6Try, _5letter6Try }
+        };
+
+        List<Button> buttons = new List<Button> 
+        { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
+
+        IAttemptsResetter attemptsResetter = new AttemptsResetter(attemptsLogic);
+        ITextBoxResetter textBoxResetter = new TextBoxResetter(textBoxes);
+        IButtonResetter buttonResetter = new ButtonResetter(buttons);
+        ILabelResetter labelResetter = new LabelResetter(showTheWordLabel);
+
+        _reseter = new Reseter(attemptsResetter, textBoxResetter, buttonResetter, labelResetter);
     }
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        await wordsFetcherLogic.GetWordsAsync();
         Intialization();
     }
-
+    
     private void Intialization()
     {
         showTheWordLabel.Visibility = Visibility.Hidden;
-        attempts = new AttemptsLogic();
-        selectedWordLogic = new SelectedWordLogic(wordsFetcherLogic.WordsList);
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -40,13 +62,13 @@ public partial class WordleUI : Window
 
         buttonsAlphabetTextService.TextBoxes = GetTextBoxesAndUserWord().Item1;
         buttonsAlphabetTextService.Letter = button.Content?.ToString() ?? string.Empty;
-        buttonsAlphabetTextService.Lives = attempts.Lives;
+        buttonsAlphabetTextService.Lives = attemptsLogic.Lives;
         buttonsAlphabetTextService.WriteLetterToTextBox();
     }
 
     private void EnterButton_Click(object sender, RoutedEventArgs e)
     {
-        if (attempts.Lives >= 6)
+        if (attemptsLogic.Lives >= 6)
         {
             return;
         }
@@ -55,7 +77,7 @@ public partial class WordleUI : Window
 
         string userWord = GetTextBoxesAndUserWord().Item2;
 
-        string selectedWord = selectedWordLogic.SelectedWord.ToUpper();
+        string selectedWord = wordSelectorLogic.SelectedWord.ToUpper();
 
         GuessingLogic guessingLogic = new GuessingLogic();
 
@@ -94,7 +116,7 @@ public partial class WordleUI : Window
 
             for (int i = 0; i < 5; i++)
             {
-                GetTextBoxesAndUserWord().Item1[attempts.Lives, i].Background = Brushes.Green;
+                GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, i].Background = Brushes.Green;
             }
             return;
         }
@@ -109,7 +131,7 @@ public partial class WordleUI : Window
 
         for (int i = 0; i < samePositions.Count; i++)
         {
-            GetTextBoxesAndUserWord().Item1[attempts.Lives, samePositions[i].Item2].Background = Brushes.Green;
+            GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, samePositions[i].Item2].Background = Brushes.Green;
             buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
         }
         for (int i = 0; i < presentButNotSamePositions.Count; i++)
@@ -117,7 +139,7 @@ public partial class WordleUI : Window
             Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
             SolidColorBrush customBrush = new SolidColorBrush(customColor);
 
-            GetTextBoxesAndUserWord().Item1[attempts.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
+            GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
             buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
         }
 
@@ -127,9 +149,9 @@ public partial class WordleUI : Window
             buttonsHighlighterService.HighlightButtons(notPresent[i].Item1, "#f1ecec");
         }
 
-        attempts.Lives++;
+        attemptsLogic.Lives++;
 
-        if (attempts.Lives > 5)
+        if (attemptsLogic.Lives > 5)
         {
             foreach (var button in buttons)
             {
@@ -144,17 +166,17 @@ public partial class WordleUI : Window
 
     private void BackSpace_Click(object sender, RoutedEventArgs e)
     {
-        if (attempts.Lives >= 6)
+        if (attemptsLogic.Lives >= 6)
         {
             return;
         }
 
         IndexLogic indexLogic = new IndexLogic();
 
-        int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attempts.Lives);
+        int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attemptsLogic.Lives);
 
-        if (index == -1 && GetTextBoxesAndUserWord().Item1[attempts.Lives, 4].Text != "") GetTextBoxesAndUserWord().Item1[attempts.Lives, 4].Text = "";
-        else if (!string.IsNullOrEmpty(GetTextBoxesAndUserWord().Item1[attempts.Lives, 0].Text)) GetTextBoxesAndUserWord().Item1[attempts.Lives, index - 1].Text = "";
+        if (index == -1 && GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 4].Text != "") GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 4].Text = "";
+        else if (!string.IsNullOrEmpty(GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 0].Text)) GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, index - 1].Text = "";
 
     }
     
@@ -165,12 +187,12 @@ public partial class WordleUI : Window
         // Handle key presses
         if (e.Key >= Key.A && e.Key <= Key.Z) // Only allow letters A-Z
         {
-            int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attempts.Lives);
+            int index = indexLogic.IndexFirstEmptyTextBox(GetTextBoxesAndUserWord().Item3, attemptsLogic.Lives);
 
             // Append the pressed key to the TextBox
             if (index != -1)
             {
-                GetTextBoxesAndUserWord().Item1[attempts.Lives, index].Text += e.Key.ToString();
+                GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, index].Text += e.Key.ToString();
             }
         }
 
@@ -190,14 +212,8 @@ public partial class WordleUI : Window
 
         if (e.Key == Key.Escape)
         {
-            List<Button> buttons = new List<Button> 
-            { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
-
-            Reseter reseter = new Reseter
-                (buttons, showTheWordLabel, GetTextBoxesAndUserWord().Item1, wordsFetcherLogic.WordsList,
-                ref attempts, ref selectedWordLogic);
-            reseter.ResetApp();
-
+            _reseter.ResetApp();
+            wordSelectorLogic = new WordSelectorLogic(wordsFetcherLogic.WordsList);
             e.Handled = true;
         }
     }
@@ -218,9 +234,9 @@ public partial class WordleUI : Window
 
         for (int i = 0; i < 5; i++)
         {
-            if (attempts.Lives < 6)
+            if (attemptsLogic.Lives < 6)
             {
-                result.Append(textBoxesObj[attempts.Lives, i].Text);
+                result.Append(textBoxesObj[attemptsLogic.Lives, i].Text);
             }
         }
 
@@ -228,9 +244,9 @@ public partial class WordleUI : Window
 
         for (int i = 0; i < 5; i++)
         {
-            if (attempts.Lives < 6)
+            if (attemptsLogic.Lives < 6)
             {
-                texts[attempts.Lives, i] = textBoxesObj[attempts.Lives, i].Text;
+                texts[attemptsLogic.Lives, i] = textBoxesObj[attemptsLogic.Lives, i].Text;
             }
         }
 

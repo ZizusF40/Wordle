@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
 
-public class Words
+public class WordsLocalList
 {
-    public List<string> GetAllWords()
+    public HashSet<string> GetAllWords()
     {
         JsonResourceLoader jsonResourceLoader = new JsonResourceLoader();
 
         // Deserialize the JSON into a list of strings
-        List<string> words = JsonSerializer.Deserialize<List<string>>(jsonResourceLoader.LoadJSON());
+        HashSet<string> words = JsonSerializer.Deserialize<HashSet<string>>(jsonResourceLoader.LoadJSON());
 
         if (words == null || words.Count == 0)
         {
