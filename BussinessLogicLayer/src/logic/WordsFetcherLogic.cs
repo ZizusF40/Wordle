@@ -1,4 +1,4 @@
-﻿public class WordsFetcherLogic
+﻿public class WordsFetcherLogic : IWordsFetcherLogic
 {
     public List<string> WordsList { get; set; } = new List<string>();
 

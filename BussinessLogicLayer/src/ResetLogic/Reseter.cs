@@ -1,17 +1,22 @@
-﻿public class Reseter : WordsFetcherLogic
+﻿public class Reseter
 {
+    private readonly IWordsFetcherLogic _wordsFetcherLogic;
     private readonly IAttemptsResetter _attemptsResetter;
     private readonly ITextBoxResetter _textBoxResetter;
     private readonly IButtonResetter _buttonResetter;
     private readonly ILabelResetter _labelResetter;
+
     public WordSelectorLogic WordSelectorLogic { get; private set; }
 
     public Reseter
-        (IAttemptsResetter attemptsResetter, 
+        (
+        IWordsFetcherLogic wordsFetcherLogic,
+        IAttemptsResetter attemptsResetter, 
         ITextBoxResetter textBoxResetter, 
         IButtonResetter buttonResetter, 
         ILabelResetter labelResetter)
     {
+        _wordsFetcherLogic = wordsFetcherLogic;
         _attemptsResetter = attemptsResetter;
         _textBoxResetter = textBoxResetter;
         _buttonResetter = buttonResetter;
@@ -20,7 +25,8 @@
 
     public void ResetApp()
     {
-        WordSelectorLogic = new WordSelectorLogic(WordsList);
+        // Reset selected word
+        WordSelectorLogic = new WordSelectorLogic(_wordsFetcherLogic.WordsList);
 
         // Reset lives
         _attemptsResetter.ResetAttempts(0);

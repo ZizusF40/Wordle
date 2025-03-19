@@ -11,17 +11,17 @@ namespace PresentationLayer;
 public partial class WordleUI : Window
 {
 
-    private readonly WordsFetcherLogic wordsFetcherLogic;
-    WordSelectorLogic wordSelectorLogic;
+    private readonly IWordsFetcherLogic wordsFetcherLogic;
+    private IWordSelectorLogic wordSelectorLogic;
     AttemptsLogic attemptsLogic;
 
     private readonly Reseter _reseter;
 
-    public WordleUI(WordsFetcherLogic wordsFetcher)
+    public WordleUI(IWordsFetcherLogic wordsFetcher)
     {
         InitializeComponent();
 
-        this.wordsFetcherLogic = wordsFetcher;
+        wordsFetcherLogic = wordsFetcher;
         wordSelectorLogic = new WordSelectorLogic(wordsFetcherLogic.WordsList);
         attemptsLogic = new AttemptsLogic();
 
@@ -35,15 +35,15 @@ public partial class WordleUI : Window
             { _1letter6Try, _2letter6Try, _3letter6Try, _4letter6Try, _5letter6Try }
         };
 
-        List<Button> buttons = new List<Button> 
-        { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
+        List<Button> buttons = 
+            new List<Button> { Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M , EnterButton, BackSpace};
 
         IAttemptsResetter attemptsResetter = new AttemptsResetter(attemptsLogic);
         ITextBoxResetter textBoxResetter = new TextBoxResetter(textBoxes);
         IButtonResetter buttonResetter = new ButtonResetter(buttons);
         ILabelResetter labelResetter = new LabelResetter(showTheWordLabel);
 
-        _reseter = new Reseter(attemptsResetter, textBoxResetter, buttonResetter, labelResetter);
+        _reseter = new Reseter(wordsFetcherLogic, attemptsResetter, textBoxResetter, buttonResetter, labelResetter);
     }
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
@@ -213,7 +213,7 @@ public partial class WordleUI : Window
         if (e.Key == Key.Escape)
         {
             _reseter.ResetApp();
-            wordSelectorLogic = new WordSelectorLogic(wordsFetcherLogic.WordsList);
+            wordSelectorLogic = _reseter.WordSelectorLogic;
             e.Handled = true;
         }
     }

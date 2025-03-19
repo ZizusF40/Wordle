@@ -15,7 +15,7 @@ namespace PresentationLayer
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Initialize your data asynchronously
-            WordsFetcherLogic wordsFetcherLogic = new WordsFetcherLogic();
+            IWordsFetcherLogic wordsFetcherLogic = new WordsFetcherLogic();
             await wordsFetcherLogic.GetWordsAsync();
 
             loadingLabel.Content = "Loading words";

@@ -1,4 +1,4 @@
-﻿public class WordSelectorLogic
+﻿public class WordSelectorLogic : IWordSelectorLogic
 {
     private List<string> wordsList;
 
