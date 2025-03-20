@@ -1,8 +1,8 @@
 ﻿public class AttemptsResetter : IAttemptsResetter
 {
-    private readonly AttemptsLogic _attemptsLogic;
+    private readonly IAttemptsLogic _attemptsLogic;
 
-    public AttemptsResetter(AttemptsLogic attemptsLogic)
+    public AttemptsResetter(IAttemptsLogic attemptsLogic)
     {
         _attemptsLogic = attemptsLogic;
     }

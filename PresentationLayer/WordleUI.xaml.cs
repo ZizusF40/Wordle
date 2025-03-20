@@ -13,7 +13,7 @@ public partial class WordleUI : Window
 
     private readonly IWordsFetcherLogic wordsFetcherLogic;
     private IWordSelectorLogic wordSelectorLogic;
-    AttemptsLogic attemptsLogic;
+    private IAttemptsLogic attemptsLogic;
 
     private readonly Reseter _reseter;
 
