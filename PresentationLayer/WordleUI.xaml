@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="Wordle" Height="800" Width="1200"
         Background="Black" PreviewKeyDown="Window_KeyDown" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
     <Grid>
 
         <Button x:Name="Q" Content="Q" HorizontalAlignment="Left" Margin="364,555,0,0" VerticalAlignment="Top" Height="58" Width="43" Click="Button_Click" Background="#5a5a5a" FontFamily="Arial Black" FontWeight="Bold" FontSize="20" Foreground="White"/>
@@ -81,6 +86,22 @@
         </Popup>
         <Label x:Name="showTheWordLabel" Content="dummy" HorizontalAlignment="Left" Margin="559,57,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Arial Black" FontSize="24"/>
         <Label Content="Press the ESC key to reset the game." HorizontalAlignment="Left" Margin="49,320,0,0" VerticalAlignment="Top" Foreground="White" FontFamily="Arial Black" FontSize="16"/>
+
+        <!-- ToggleButton for Settings -->
+        <ToggleButton x:Name="SettingsButton" 
+                      Content="⚙" 
+                      FontSize="20" 
+                      HorizontalAlignment="Right" 
+                      VerticalAlignment="Top"
+                      Margin="10" 
+                      Padding="10" />
+
+        <!-- CheckBox for Hardcore Mode -->
+        <CheckBox x:Name="HardcoreCheckBox" 
+                  Content="Hardcore" 
+                  HorizontalAlignment="Left" 
+                  VerticalAlignment="Top"
+                  Visibility="{Binding IsChecked, ElementName=SettingsButton, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="1096,64,0,0" Foreground="White" />
 
     </Grid>
 </Window>

@@ -45,7 +45,7 @@ public partial class WordleUI : Window
 
         _reseter = new Reseter(wordsFetcherLogic, attemptsResetter, textBoxResetter, buttonResetter, labelResetter);
     }
-    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         Intialization();
     }
@@ -96,7 +96,7 @@ public partial class WordleUI : Window
 
         CompareWordsLogic compareWordsLogic = new CompareWordsLogic(wordsFetcherLogic.WordsList);
 
-        if (!compareWordsLogic.CompareWords(userWord))
+        if (!compareWordsLogic.CompareWords(userWord) && HardcoreCheckBox.IsChecked == false)
         {
             PopupService popupService = new PopupService(Popup, PopupTextBlock);
 
@@ -129,24 +129,27 @@ public partial class WordleUI : Window
 
         ButtonsHighlighterService buttonsHighlighterService = new ButtonsHighlighterService(buttons);
 
-        for (int i = 0; i < samePositions.Count; i++)
+        if (compareWordsLogic.CompareWords(userWord) || HardcoreCheckBox.IsChecked == false)
         {
-            GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, samePositions[i].Item2].Background = Brushes.Green;
-            buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
-        }
-        for (int i = 0; i < presentButNotSamePositions.Count; i++)
-        {
-            Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
-            SolidColorBrush customBrush = new SolidColorBrush(customColor);
+            for (int i = 0; i < samePositions.Count; i++)
+            {
+                GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, samePositions[i].Item2].Background = Brushes.Green;
+                buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
+            }
+            for (int i = 0; i < presentButNotSamePositions.Count; i++)
+            {
+                Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
+                SolidColorBrush customBrush = new SolidColorBrush(customColor);
 
-            GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
-            buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
-        }
+                GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
+                buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
+            }
 
 
-        for (int i = 0; i < notPresent.Count; i++)
-        {
-            buttonsHighlighterService.HighlightButtons(notPresent[i].Item1, "#f1ecec");
+            for (int i = 0; i < notPresent.Count; i++)
+            {
+                buttonsHighlighterService.HighlightButtons(notPresent[i].Item1, "#f1ecec");
+            }
         }
 
         attemptsLogic.Lives++;
