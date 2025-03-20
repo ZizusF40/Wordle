@@ -10,13 +10,13 @@
 
     public void CheckCharacters(string userLetter, string selectedWord)
     {
+        if (userLetter.Length < 5)
+        {
+            throw new IndexOutOfRangeException("The userLetter must have 5 characters");
+        }
+
         for (int i = 0; i < 5; i++)
         {
-            if (userLetter.Length < 5)
-            {
-                throw new IndexOutOfRangeException("The userLetter must have 5 characters");
-            }
-
             char userChar = userLetter[i];
             char selectedWordChar = selectedWord[i];
 

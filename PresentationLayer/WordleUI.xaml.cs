@@ -131,20 +131,42 @@ public partial class WordleUI : Window
 
         if (compareWordsLogic.CompareWords(userWord) || HardcoreCheckBox.IsChecked == false)
         {
+            HashSet<int> correctPositions = new HashSet<int>();
+
+            Dictionary<char, int> targetLetterFrequency = new Dictionary<char, int>();
+            foreach (char c in selectedWord)
+            {
+                if (targetLetterFrequency.ContainsKey(c))
+                    targetLetterFrequency[c]++;
+                else
+                    targetLetterFrequency[c] = 1;
+            }
+
             for (int i = 0; i < samePositions.Count; i++)
             {
                 GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, samePositions[i].Item2].Background = Brushes.Green;
                 buttonsHighlighterService.HighlightButtons(samePositions[i].Item1, "#FF008000");
+                correctPositions.Add(samePositions[i].Item2);
+                targetLetterFrequency[samePositions[i].Item1]--;
+
             }
             for (int i = 0; i < presentButNotSamePositions.Count; i++)
             {
-                Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
-                SolidColorBrush customBrush = new SolidColorBrush(customColor);
+                if (correctPositions.Contains(presentButNotSamePositions[i].Item2))
+                    continue;
 
-                GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
-                buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
+                if (targetLetterFrequency.ContainsKey(presentButNotSamePositions[i].Item1) && 
+                    targetLetterFrequency[presentButNotSamePositions[i].Item1] > 0)
+                {
+                    Color customColor = (Color)ColorConverter.ConvertFromString("#c4c629");
+                    SolidColorBrush customBrush = new SolidColorBrush(customColor);
+
+                    GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, presentButNotSamePositions[i].Item2].Background = customBrush;
+                    buttonsHighlighterService.HighlightButtons(presentButNotSamePositions[i].Item1, "#c4c629");
+
+                    targetLetterFrequency[presentButNotSamePositions[i].Item1]--;
+                }   
             }
-
 
             for (int i = 0; i < notPresent.Count; i++)
             {
@@ -180,7 +202,6 @@ public partial class WordleUI : Window
 
         if (index == -1 && GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 4].Text != "") GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 4].Text = "";
         else if (!string.IsNullOrEmpty(GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, 0].Text)) GetTextBoxesAndUserWord().Item1[attemptsLogic.Lives, index - 1].Text = "";
-
     }
     
     private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -206,7 +227,7 @@ public partial class WordleUI : Window
             e.Handled = true;
         }
 
-        if (e.Key == Key.Back)
+        if (e.Key == Key.Back && BackSpace.IsEnabled)
         {
             BackSpace_Click(sender, e);
 
