@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:PresentationLayer"
         mc:Ignorable="d"
         Title="Wordle" Height="800" Width="1200"
-        Background="Black" PreviewKeyDown="Window_KeyDown" Loaded="Window_Loaded">
+        Background="Black" PreviewKeyDown="Window_KeyDown" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
+		Icon="wordle.ico">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

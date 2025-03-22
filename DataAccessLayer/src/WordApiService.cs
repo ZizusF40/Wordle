@@ -3,19 +3,20 @@ using Newtonsoft.Json.Linq;
 
 public class WordApiService
 {
-    private static readonly HttpClient client = new HttpClient(); // to delete static for test
-
+    private static readonly HttpClient client = new HttpClient();
+    private HashSet<string> words = new HashSet<string>();
     public async Task<List<string>> GetWordsAsync()
     {
+        await GetFirstList();
+        await GetSecondList();
+        GetThirdList();
+
+        return words.ToList();
+    }
+
+    private async Task GetFirstList()
+    {
         string apiUrl = "https://random-word-api.herokuapp.com/word?number=10000&length=5";
-
-        //https://developer.wordnik.com/
-        //email = xabatoy247@barodis.com
-        //username = Xabatoy247
-        //password = J(eIb4Lp3rcH)Uq*
-
-        //List<string> words = new List<string>();
-        HashSet<string> words = new HashSet<string>();
 
         try
         {
@@ -25,13 +26,15 @@ public class WordApiService
 
             // Deserialize JSON response to a list of strings
             words = JsonConvert.DeserializeObject<HashSet<string>>(responseBody);
-            //return words;
         }
         catch (HttpRequestException e)
         {
             Console.WriteLine($"Request error: {e.Message}");
         }
+    }
 
+    private async Task GetSecondList()
+    {
         string url = "https://api.datamuse.com/words?sp=?????&max=10000";
 
         try
@@ -62,13 +65,14 @@ public class WordApiService
         {
             Console.WriteLine($"Exception: {ex.Message}");
         }
+    }
 
-        WordsLocalList wordsLocalList = new WordsLocalList();
-        foreach (var word in wordsLocalList.GetAllWords())
+    private void GetThirdList() 
+    {
+        IWordsLocalList localList = new WordsLocalList();
+        foreach (var word in localList.GetAllWords())
         {
             words.Add(word);
         }
-
-        return words.ToList();
     }
 }

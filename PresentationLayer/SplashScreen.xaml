@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PresentationLayer"
         mc:Ignorable="d"
-        Title="SplashScreen" Height="300" Width="300" Background="Black" Loaded="Window_Loaded">
+        Title="SplashScreen" Height="300" Width="300" Background="Black" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True"
+        Icon="wordle.ico">
     <Grid>
         <Label Content="Wordle" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="72" FontFamily="Arial Black"/>
         <Label x:Name="loadingLabel" Content="dummy" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" FontSize="10" FontFamily="Arial Black" Margin="36,229,0,0"/>

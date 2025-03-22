@@ -1,6 +1,11 @@
 ﻿using System.Text.Json;
 
-public class WordsLocalList
+public interface IWordsLocalList
+{
+    HashSet<string> GetAllWords();
+}
+
+public class WordsLocalList : IWordsLocalList
 {
     public HashSet<string> GetAllWords()
     {
